@@ -82,15 +82,21 @@ class WhisperModel(ABC):
         self.dta_padding = int(self.dta_padding*SAMPLE_RATE)
         self.max_initial_prompt_len = self.max_text_token_len//2 -1
 
-        # Load Pre Processor
-        self.preprocessor = LogMelSpectogram(n_mels=self.n_mels).to(self.device)
+        # Ensure consistent device specification for multi-GPU environments
+        if self.device == "cuda" and torch.cuda.is_available():
+            full_device = f"cuda:{self.device_index}"
+        else:
+            full_device = self.device
 
-        # Load Speech Segmenter
-        self.speech_segmenter = SpeechSegmenter(self.vad_model, device=self.device, **self.speech_segmenter_options)
+        # Load Pre Processor
+        self.preprocessor = LogMelSpectogram(n_mels=self.n_mels).to(full_device)
+
+        # Load Speech Segmenter with proper device specification
+        self.speech_segmenter = SpeechSegmenter(self.vad_model, device=full_device, **self.speech_segmenter_options)
 
         # Load Data Loader
         self.data_loader = WhisperDataLoader(
-            self.device, self.tokenizer, self.speech_segmenter, 
+            full_device, self.tokenizer, self.speech_segmenter, 
             dta_padding=self.dta_padding,
             without_timestamps=self.without_timestamps, 
             max_speech_len=self.max_speech_len, 
