@@ -23,11 +23,11 @@ class SegmentVAD(VADBaseClass):
 
         if self.device == 'cpu':
             # This is a JIT Scripted model of Nvidia's NeMo Marblenet Model: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/nemo/models/vad_multilingual_marblenet
-            self.vad_pp = torch.jit.load(os.path.join(BASE_PATH, "assets/vad_pp_cpu.ts")).to(self.device)
-            self.vad_model = torch.jit.load(os.path.join(BASE_PATH, "assets/seg_vad_model_cpu.ts")).to(self.device)
+            self.vad_pp = torch.jit.load(os.path.join(BASE_PATH, "assets/vad_pp_cpu.ts"), map_location=self.device)
+            self.vad_model = torch.jit.load(os.path.join(BASE_PATH, "assets/seg_vad_model_cpu.ts"), map_location=self.device)
         else:
             self.vad_pp = torch.jit.load(os.path.join(BASE_PATH, "assets/vad_pp_gpu.ts")).to(self.device)
-            self.vad_model = torch.jit.load(os.path.join(BASE_PATH, "assets/seg_vad_model_gpu.ts")).to(self.device)
+            self.vad_model = torch.jit.load(os.path.join(BASE_PATH, "assets/seg_vad_model_gpu.ts"), map_location=self.device)
         
         self.vad_pp = torch.jit.load(os.path.join(BASE_PATH, "assets/vad_pp.ts"))
         self.vad_model = torch.jit.load(os.path.join(BASE_PATH, "assets/segment_vad_model.ts"))

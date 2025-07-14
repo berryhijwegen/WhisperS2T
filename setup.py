@@ -16,10 +16,11 @@ setup(
     author="Shashi Kant Gupta",
     url="https://github.com/shashikg/WhisperS2T",
     license="MIT",
-    packages=find_packages(exclude=["tests*"]),
+    packages=find_packages(exclude=["tests*"]) + ['whisper_s2t.assets'],
     install_requires=requirements,
     package_data={
-        '': ['assets/*'],
+        'whisper_s2t': ['assets/*'],
+        'whisper_s2t.assets': ['*'],
     },
     include_package_data=True,
 )
